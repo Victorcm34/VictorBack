@@ -2,18 +2,18 @@ using VictorBack.DTOs;
 
 namespace VictorBack.Services
 {
-    public interface IData
+    public interface IUserService
     {
         /// <summary>
-        /// Method to retrieve all experience data.
+        /// Method that uses <see cref="IData.GetExperience"/> to get user experience
         /// </summary>
         /// <returns></returns>
         public ExperienceDTO GetExperience();
 
         /// <summary>
-        /// Method to retrieve all user info.
+        /// Method that uses <see cref="IData.GetAboutMe"/> to get user information
         /// </summary>
         /// <returns></returns>
-        public UserDTO GetAboutMe();
+        public UserDTO GetUserInfo();
     }
 }

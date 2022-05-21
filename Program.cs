@@ -1,20 +1,25 @@
-using VictorBack.Models;
 using VictorBack.Services;
 
+const string corsName = "mycors";
 var builder = WebApplication.CreateBuilder(args);
-
+var origins = builder.Configuration.GetSection("CorsOrigins").Get<string[]>();
+builder.Services.AddCors(p => p.AddPolicy(name:corsName, builder =>
+{
+    builder.WithOrigins(origins)
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+}));
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<IData,DataAccess>();
+builder.Services.AddAuthorization();
+builder.Services.AddSingleton<IData, DataAccess>();
+builder.Services.AddSingleton<IUserService, UserService>();
 
-var origins = builder.Configuration.GetSection("AllowedHosts").Get<string[]>();
-builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
-{
-    builder.WithOrigins(origins).AllowAnyMethod().AllowAnyHeader();
-}));
+
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -23,14 +28,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("corsapp");
+app.UseHttpsRedirection();
 
-// app.UseHttpsRedirection();
+app.UseCors(corsName);
 
 // app.UseAuthorization();
 
-app.Map("/experience", (IData data) => {
-    return Results.Ok(data.GetExperience());
+app.Map("/api/experience", (IUserService user) => {
+    return Results.Ok(user.GetExperience());
+});
+
+app.Map("/api/about", (IUserService user) => {
+    return Results.Ok(user.GetUserInfo());
 });
 
 app.Run();
