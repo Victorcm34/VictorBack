@@ -32,8 +32,6 @@ app.UseHttpsRedirection();
 
 app.UseCors(corsName);
 
-// app.UseAuthorization();
-
 app.Map("/api/experience", (IUserService user) => {
     return Results.Ok(user.GetExperience());
 });
